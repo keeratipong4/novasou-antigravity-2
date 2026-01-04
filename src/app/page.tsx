@@ -1,65 +1,96 @@
-import Image from "next/image";
+import { BlockRenderer, type Block } from "@/components/blocks/BlockRenderer";
+
+const MOCK_HOME_BLOCKS: Block[] = [
+  {
+    __component: "blocks.hero",
+    id: 1,
+    headline: "BUILD GLOBAL PRODUCTS - WORK FROM THAILAND",
+    subheadline: "We empower global products with our exceptional teams based in Thailand. Join us to build world-class software.",
+    ctaText: "Discover More",
+    ctaLink: "/growth",
+    layout: "split",
+    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2670&auto=format&fit=crop", // Placeholder
+  },
+  {
+    __component: "blocks.feature-grid",
+    id: 2,
+    title: "WHY JOIN NOVASOU?",
+    subtitle: "We build tailored teams that integrate seamlessly with your organization.",
+    items: [
+      { icon: "globe", title: "Culture & Community", description: "Join a vibrant community of tech enthusiasts and innovators." },
+      { icon: "users", title: "Growth & Learning", description: "Access to world-class mentorship and continuous learning resources." },
+      { icon: "zap", title: "Global Impact", description: "Work on products that reach millions of users worldwide." },
+      { icon: "shield", title: "Salary & Benefits", description: "Competitive compensation packages and comprehensive health benefits." },
+    ],
+    variant: "icon-card",
+    columns: 4,
+  },
+  {
+    __component: "blocks.feature-grid",
+    id: 3,
+    title: "IS NOVASOU FOR ME?",
+    items: [
+      { 
+          title: "Experienced Professionals", 
+          description: "Take your career to the next level with challenging projects.",
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop"
+      },
+      { 
+          title: "Aspiring Technologists", 
+          description: "Start your journey with strong mentorship and guidance.",
+          image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"
+      },
+    ],
+    variant: "image-card",
+    columns: 2,
+  },
+  {
+    __component: "blocks.feature-grid",
+    id: 4,
+    title: "ROLES YOU'LL FIND AT NOVASOU",
+    items: [
+        { icon: "laptop", title: "Engineering", description: "Frontend, Backend, Fullstack, Mobile" },
+        { icon: "briefcase", title: "Product & Design", description: "PM, PO, UI/UX Designer" },
+        { icon: "layers", title: "QA & Testing", description: "Manual, Automation, SDET" },
+        { icon: "shield", title: "DevOps & Cloud", description: "AWS, Azure, GCP, CI/CD" },
+        { icon: "users", title: "HR & People", description: "Recruitment, People Ops" },
+    ],
+    variant: "icon-minimal",
+    columns: 5,
+  },
+  {
+    __component: "blocks.media-text-split",
+    id: 5,
+    title: "LIFE AT NOVASOU",
+    content: "Beyond code and screens, we are a community. We believe in work-life balance, fostering creativity through fun activities, and building lasting relationships. From weekly knowledge sharing sessions to annual company retreats, life at Novasou is never dull.",
+    mediaUrl: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2670&auto=format&fit=crop",
+    alignment: "right",
+  },
+  {
+      __component: "blocks.testimonials",
+      id: 6,
+      title: "HEAR FROM OUR TEAM",
+      layout: "grid",
+      items: [
+          { quote: "Working at Novasou has been a game changer for my career. The exposure to global projects is unmatched.", author: "Mike T.", role: "Senior Developer", company: "Novasou" },
+          { quote: "The culture here is truly supportive. Everyone is willing to help and share their knowledge.", author: "Sarah L.", role: "UX Designer", company: "Novasou" },
+      ]
+  },
+  {
+    __component: "blocks.hero",
+    id: 8,
+    headline: "READY TO MAKE YOUR MARK?",
+    subheadline: "Join our team and be part of the global tech scene.",
+    ctaText: "See Open Roles",
+    ctaLink: "/careers",
+    layout: "center", // Bottom CTA is centered
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main>
+      <BlockRenderer blocks={MOCK_HOME_BLOCKS} />
+    </main>
   );
 }

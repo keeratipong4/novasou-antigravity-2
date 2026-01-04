@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Audiowide, Titillium_Web } from "next/font/google";
+import { Navbar } from "@/components/global/Navbar";
+import { Footer } from "@/components/global/Footer";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const audiowide = Audiowide({
+  weight: "400",
+  variable: "--font-audiowide",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const titilliumWeb = Titillium_Web({
+  weight: ["200", "300", "400", "600", "700"],
+  variable: "--font-titillium",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,9 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${audiowide.variable} ${titilliumWeb.variable} antialiased`}
       >
-        {children}
+        <Navbar />
+        <main className="min-h-screen pt-0">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
