@@ -27,11 +27,13 @@ export function Hero({
 
   return (
     <section className={cn(
-      "relative w-full overflow-hidden bg-dark-blue text-white",
+      "relative w-full overflow-hidden bg-primary text-white",
       isSplit ? "pt-32 pb-20 min-h-[80vh]" : "min-h-screen flex items-center justify-center pt-20"
     )}>
+       {/* Background Dotted Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[size:20px_20px] opacity-40 pointer-events-none">
       {/* Animated Background Shapes */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none"> */}
         <motion.div
            className="absolute -top-[10%] -right-[10%] w-[50vh] h-[50vh] rounded-full bg-gradient-to-br from-gradient-start to-gradient-end opacity-30 blur-[100px]"
            animate={{

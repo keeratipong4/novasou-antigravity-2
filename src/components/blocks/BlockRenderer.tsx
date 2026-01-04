@@ -9,6 +9,7 @@ import { Testimonials } from "@/components/blocks/Testimonials";
 import { JobListing } from "@/components/blocks/JobListing";
 import { ContactForm } from "@/components/blocks/ContactForm";
 import { GalleryGrid } from "@/components/blocks/GalleryGrid";
+import { AboutIntro } from "@/components/blocks/AboutIntro";
 
 // Define a union type for all possible blocks
 export type Block = 
@@ -21,7 +22,8 @@ export type Block =
   | { __component: "blocks.testimonials"; id: number; title?: string; items: any[]; layout?: "slider" | "grid" }
   | { __component: "blocks.job-listing"; id: number; jobs?: any[] }
   | { __component: "blocks.contact-form"; id: number; emailRecipient?: string }
-  | { __component: "blocks.gallery-grid"; id: number; title?: string; items: any[] };
+  | { __component: "blocks.gallery-grid"; id: number; title?: string; items: any[] }
+  | { __component: "blocks.about-intro"; id: number; leftTitle: string; leftContent: string; rightTitle: string; rightContent: string; imageUrl: string };
 
 type BlockRendererProps = {
   blocks: Block[];
@@ -54,6 +56,8 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
              return <ContactForm key={`${block.__component}-${index}`} {...block} />;
           case "blocks.gallery-grid":
              return <GalleryGrid key={`${block.__component}-${index}`} {...block} />;
+          case "blocks.about-intro":
+             return <AboutIntro key={`${block.__component}-${index}`} {...block} />;
           default:
             return null;
         }

@@ -43,11 +43,9 @@ export function Navbar() {
   const linkClasses = (isActive: boolean) =>
     cn(
       "text-sm font-semibold transition-colors hover:text-primary-light",
-      isActive
-        ? "text-primary-light"
-        : isScrolled
-        ? "text-foreground hover:text-primary"
-        : "text-white/90 hover:text-white"
+      isScrolled
+        ? (isActive ? "text-primary font-bold" : "text-foreground hover:text-primary")
+        : (isActive ? "text-white font-bold underline decoration-2 underline-offset-4" : "text-white/90 hover:text-white")
     );
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
