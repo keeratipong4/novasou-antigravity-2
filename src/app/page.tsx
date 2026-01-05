@@ -1,4 +1,5 @@
 import { BlockRenderer, type Block } from "@/components/blocks/BlockRenderer";
+import { fetchAPI, getStrapiMedia } from "@/api/strapi";
 
 const MOCK_HOME_BLOCKS: Block[] = [
   {
@@ -87,10 +88,77 @@ const MOCK_HOME_BLOCKS: Block[] = [
   },
 ];
 
-export default function Home() {
+async function getStrapiData() {
+  try {
+    const path = "/home-page";
+    const urlParamsObject = {
+      populate: {
+        blocks: {
+          populate: {
+            image: true,
+            media: true,
+            links: true,
+            items: {
+              populate: {
+                image: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    };
+    const response = await fetchAPI(path, urlParamsObject);
+    return response?.data?.attributes?.blocks;
+  } catch (error) {
+    console.warn("Strapi is not running or unreachable. Falling back to mock data.");
+    return null;
+  }
+}
+
+function transformBlock(block: any): Block {
+  // Deep clone to avoid mutating original if needed, or just spread
+  const transformed = { ...block };
+
+  // Transform Images in Hero
+  if (block.__component === "blocks.hero" && block.image?.data) {
+    transformed.image = getStrapiMedia(block.image);
+  }
+
+  // Transform Media in MediaTextSplit - Note: Field name mismatch 'media' vs 'mediaUrl'
+  if (block.__component === "blocks.media-text-split" && block.media?.data) {
+    transformed.mediaUrl = getStrapiMedia(block.media);
+  }
+
+  // Transform Items in Feature Grid
+  if (block.__component === "blocks.feature-grid" && Array.isArray(block.items)) {
+    transformed.items = block.items.map((item: any) => ({
+      ...item,
+      image: item.image?.data ? getStrapiMedia(item.image) : item.image,
+    }));
+  }
+
+  // Transform Items in Testimonials
+  if (block.__component === "blocks.testimonials" && Array.isArray(block.items)) {
+      transformed.items = block.items.map((item: any) => ({
+          ...item,
+          avatar: item.avatar?.data ? getStrapiMedia(item.avatar) : undefined
+      }));
+  }
+
+  return transformed as Block;
+}
+
+export default async function Home() {
+  const strapiBlocks = await getStrapiData();
+  
+  const blocks = strapiBlocks 
+    ? strapiBlocks.map(transformBlock) 
+    : MOCK_HOME_BLOCKS;
+
   return (
     <main>
-      <BlockRenderer blocks={MOCK_HOME_BLOCKS} />
+      <BlockRenderer blocks={blocks} />
     </main>
   );
 }
