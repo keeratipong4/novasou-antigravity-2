@@ -93,8 +93,8 @@ export function Hero({
                           {ctaText}
                         </Button>
                     )}
-                    <Button variant="secondary" size="lg" href="/contact" className="border-white/20 text-white hover:bg-white/10 rounded-full px-8">
-                       Learn More
+                    <Button variant="secondary" size="lg" href="/careers" className="border-white/20 text-white hover:bg-white/10 rounded-full px-8">
+                       Opening Positions
                     </Button>
                   </motion.div>
               </div>

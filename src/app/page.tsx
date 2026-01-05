@@ -90,18 +90,38 @@ const MOCK_HOME_BLOCKS: Block[] = [
 
 async function getStrapiData() {
   try {
-    const path = "/home-page";
+    const path = "/home";
     const urlParamsObject = {
       populate: {
         blocks: {
-          populate: {
-            image: true,
-            media: true,
-            links: true,
-            items: {
+          on: {
+            "blocks.hero": {
               populate: {
                 image: true,
-                avatar: true,
+                links: true,
+              },
+            },
+            "blocks.media-text-split": {
+              populate: {
+                media: true,
+              },
+            },
+            "blocks.feature-grid": {
+              populate: {
+                items: {
+                  populate: {
+                    image: true,
+                  },
+                },
+              },
+            },
+            "blocks.testimonials": {
+              populate: {
+                items: {
+                  populate: {
+                    avatar: true,
+                  },
+                },
               },
             },
           },
@@ -109,7 +129,7 @@ async function getStrapiData() {
       },
     };
     const response = await fetchAPI(path, urlParamsObject);
-    return response?.data?.attributes?.blocks;
+    return response?.data?.blocks;
   } catch (error) {
     console.warn("Strapi is not running or unreachable. Falling back to mock data.");
     return null;
@@ -121,12 +141,12 @@ function transformBlock(block: any): Block {
   const transformed = { ...block };
 
   // Transform Images in Hero
-  if (block.__component === "blocks.hero" && block.image?.data) {
+  if (block.__component === "blocks.hero" && block.image) {
     transformed.image = getStrapiMedia(block.image);
   }
 
-  // Transform Media in MediaTextSplit - Note: Field name mismatch 'media' vs 'mediaUrl'
-  if (block.__component === "blocks.media-text-split" && block.media?.data) {
+  // Transform Media in MediaTextSplit
+  if (block.__component === "blocks.media-text-split" && block.media) {
     transformed.mediaUrl = getStrapiMedia(block.media);
   }
 
@@ -134,7 +154,7 @@ function transformBlock(block: any): Block {
   if (block.__component === "blocks.feature-grid" && Array.isArray(block.items)) {
     transformed.items = block.items.map((item: any) => ({
       ...item,
-      image: item.image?.data ? getStrapiMedia(item.image) : item.image,
+      image: getStrapiMedia(item.image) || item.image,
     }));
   }
 
@@ -142,7 +162,7 @@ function transformBlock(block: any): Block {
   if (block.__component === "blocks.testimonials" && Array.isArray(block.items)) {
       transformed.items = block.items.map((item: any) => ({
           ...item,
-          avatar: item.avatar?.data ? getStrapiMedia(item.avatar) : undefined
+          avatar: getStrapiMedia(item.avatar) || undefined
       }));
   }
 
@@ -151,14 +171,14 @@ function transformBlock(block: any): Block {
 
 export default async function Home() {
   const strapiBlocks = await getStrapiData();
-  
+  console.log(strapiBlocks);
   const blocks = strapiBlocks 
     ? strapiBlocks.map(transformBlock) 
     : MOCK_HOME_BLOCKS;
 
   return (
     <main>
-      <BlockRenderer blocks={blocks} />
+      <BlockRenderer blocks={MOCK_HOME_BLOCKS} />
     </main>
   );
 }

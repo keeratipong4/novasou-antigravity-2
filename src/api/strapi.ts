@@ -34,7 +34,6 @@ export async function fetchAPI(
     const requestUrl = `${getStrapiURL(
       `/api${path}${queryString ? `?${queryString}` : ""}`
     )}`;
-
     // Trigger API call
     const response = await fetch(requestUrl, mergedOptions);
     const data = await response.json();
@@ -52,10 +51,19 @@ export async function fetchAPI(
  * Helper to get the full image URL from Strapi media object
  */
 export function getStrapiMedia(media: any) {
-  if (!media?.data?.attributes?.url) // Strapi v4/v5 structure check
-      return null;
+  if (!media) return null;
+  
+  // Flattened structure (Strapi v5 or populated)
+  if (media.url) {
+    const { url } = media;
+    return url.startsWith("/") ? getStrapiURL(url) : url;
+  }
+
+  // Nested structure (Strapi v4)
+  if (media.data?.attributes?.url) {
+    const { url } = media.data.attributes;
+    return url.startsWith("/") ? getStrapiURL(url) : url;
+  }
       
-  const { url } = media.data.attributes;
-  const imageUrl = url.startsWith("/") ? getStrapiURL(url) : url;
-  return imageUrl;
+  return null;
 }
