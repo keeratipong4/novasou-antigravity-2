@@ -141,13 +141,13 @@ async function getStrapiData() {
 
 export default async function Home() {
   const strapiBlocks = await getStrapiData();
+  // const blocks = strapiBlocks.map(transformBlock) 
   const blocks = strapiBlocks 
     ? strapiBlocks.map(transformBlock) 
     : MOCK_HOME_BLOCKS;
 
   return (
     <main>
-      {/* <BlockRenderer blocks={MOCK_HOME_BLOCKS} /> */}
       <BlockRenderer blocks={blocks} />
     </main>
   );

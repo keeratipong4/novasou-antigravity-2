@@ -18,6 +18,7 @@ export async function fetchAPI(
   urlParamsObject: Record<string, any> = {},
   options: RequestInit = {}
 ) {
+  let requestUrl = "";
   try {
     // Merge default and user options
     const mergedOptions = {
@@ -31,9 +32,11 @@ export async function fetchAPI(
     const queryString = qs.stringify(urlParamsObject, {
         encodeValuesOnly: true, // prettify URL
     });
-    const requestUrl = `${getStrapiURL(
+    
+    requestUrl = `${getStrapiURL(
       `/api${path}${queryString ? `?${queryString}` : ""}`
     )}`;
+
     // Trigger API call
     const response = await fetch(requestUrl, mergedOptions);
     const data = await response.json();
@@ -41,8 +44,11 @@ export async function fetchAPI(
     
   } catch (error) {
     console.error(`Error fetching API from ${path}:`, error);
+    if (!STRAPI_API_URL) {
+        console.error("CRITICAL: NEXT_PUBLIC_STRAPI_API_URL is not set or empty. Defaulting to relative path.");
+    }
     throw new Error(
-      `Please check if your server is running and you set all the environment variables.`
+      `Failed to fetch from ${requestUrl}. Check console for details. Ensure NEXT_PUBLIC_STRAPI_API_URL is set correcty.`
     );
   }
 }

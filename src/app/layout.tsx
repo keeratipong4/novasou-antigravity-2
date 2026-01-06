@@ -34,6 +34,7 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={`${audiowide.variable} ${titilliumWeb.variable} antialiased`}
+        suppressHydrationWarning
       >
         <Navbar links={globalData?.navbar} />
         <main className="min-h-screen pt-0">
