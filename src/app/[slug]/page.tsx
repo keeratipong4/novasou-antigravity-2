@@ -27,7 +27,7 @@ async function getPageData(slug: string) {
         },
       },
     };
-    const response = await fetchAPI(path, urlParamsObject);
+    const response = await fetchAPI(path, urlParamsObject, { cache: "no-store" });
     console.log(`Fetching page for slug: ${slug}`, response?.data?.[0] ? "Found" : "Not Found");
     return response?.data?.[0];
   } catch (error) {

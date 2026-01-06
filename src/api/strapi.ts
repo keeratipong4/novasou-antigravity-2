@@ -1,6 +1,6 @@
 import qs from "qs";
 
-export const STRAPI_API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
+export const STRAPI_API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || "";
 
 export function getStrapiURL(path = "") {
   return `${STRAPI_API_URL}${path}`;
@@ -77,7 +77,7 @@ export async function getGlobalData() {
         "footer"
       ]
     };
-    const response = await fetchAPI(path, urlParamsObject);
+    const response = await fetchAPI(path, urlParamsObject, { cache: "no-store" });
     return response?.data;
   } catch (error) {
     console.error("Error fetching global data:", error);

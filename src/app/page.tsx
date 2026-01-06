@@ -129,7 +129,7 @@ async function getStrapiData() {
         },
       },
     };
-    const response = await fetchAPI(path, urlParamsObject);
+    const response = await fetchAPI(path, urlParamsObject, { cache: "no-store" });
     return response?.data?.blocks;
   } catch (error) {
     console.warn("Strapi is not running or unreachable. Falling back to mock data.");
@@ -147,6 +147,7 @@ export default async function Home() {
 
   return (
     <main>
+      {/* <BlockRenderer blocks={MOCK_HOME_BLOCKS} /> */}
       <BlockRenderer blocks={blocks} />
     </main>
   );
