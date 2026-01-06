@@ -5,7 +5,7 @@ import { fetchAPI } from "@/api/strapi";
 import { transformBlock } from "@/utils/blocks";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 async function getPageData(slug: string) {
@@ -28,6 +28,7 @@ async function getPageData(slug: string) {
       },
     };
     const response = await fetchAPI(path, urlParamsObject);
+    console.log(`Fetching page for slug: ${slug}`, response?.data?.[0] ? "Found" : "Not Found");
     return response?.data?.[0];
   } catch (error) {
     console.error("Error fetching page data:", error);
@@ -36,7 +37,8 @@ async function getPageData(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const pageData = await getPageData(params.slug);
+  const { slug } = await params;
+  const pageData = await getPageData(slug);
   if (!pageData) return {};
 
   const seo = pageData.seo;
@@ -47,7 +49,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  const pageData = await getPageData(params.slug);
+  const { slug } = await params;
+  const pageData = await getPageData(slug);
 
   if (!pageData) {
     notFound();
