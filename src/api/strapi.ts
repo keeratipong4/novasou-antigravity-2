@@ -67,3 +67,20 @@ export function getStrapiMedia(media: any) {
       
   return null;
 }
+
+export async function getGlobalData() {
+  try {
+    const path = "/global";
+    const urlParamsObject = {
+      populate: [
+        "navbar",
+        "footer"
+      ]
+    };
+    const response = await fetchAPI(path, urlParamsObject);
+    return response?.data;
+  } catch (error) {
+    console.error("Error fetching global data:", error);
+    return null;
+  }
+}

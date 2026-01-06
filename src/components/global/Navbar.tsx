@@ -7,18 +7,37 @@ import { Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { NAV_LINKS } from "@/constants";
 
-export function Navbar() {
+type NavbarProps = {
+  links?: {
+    id: number | string;
+    text: string;
+    url: string;
+    isExternal: boolean;
+  }[];
+};
+
+export function Navbar({ links = [] }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Combine static NAV_LINKS with dynamic links from Strapi
+  const staticItems = NAV_LINKS.map((link, index) => ({
+    id: `static-${index}`,
+    text: link.label,
+    url: link.href,
+    isExternal: false,
+  }));
+
+  const navItems = [...staticItems, ...links];
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -28,99 +47,113 @@ export function Navbar() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Determine navbar styles based on scroll state
-  const navbarClasses = cn(
-    "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-    isScrolled ? "bg-white/90 backdrop-blur-md shadow-md py-3" : "py-5 bg-transparent"
-  );
-
-  const logoClasses = cn(
-    "font-display text-2xl font-bold tracking-wider transition-colors",
-    isScrolled ? "text-primary" : "text-white"
-  );
-
-  // Link colors: White when transparent (top), Dark when scrolled
-  const linkClasses = (isActive: boolean) =>
-    cn(
-      "text-sm font-semibold transition-colors hover:text-primary-light",
-      isScrolled
-        ? (isActive ? "text-primary font-bold" : "text-foreground hover:text-primary")
-        : (isActive ? "text-white font-bold underline decoration-2 underline-offset-4" : "text-white/90 hover:text-white")
-    );
-
-  const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
   return (
-    <nav className={navbarClasses}>
-      <Container className="flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className={logoClasses}>
-          NOVASOU
-        </Link>
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled
+          ? "bg-white/80 backdrop-blur-md shadow-sm py-4"
+          : "bg-transparent py-6"
+      )}
+    >
+      <Container>
+        <nav className="flex items-center justify-between">
+          <Link href="/" className="relative z-50 group">
+             <span className={cn(
+               "font-display text-2xl font-bold tracking-tight transition-colors duration-300",
+               isScrolled ? "text-primary" : "text-white"
+             )}>
+                Novasou
+                <span className="text-secondary ml-1">.</span>
+             </span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={linkClasses(pathname === link.href)}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Button
-            variant={isScrolled ? "primary" : "secondary"}
-            size="sm"
-            className={cn(
-               !isScrolled && "border-white/50 text-white hover:bg-white/10"
-            )}
-            href="/contact"
-          >
-            Get Started
-          </Button>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className={cn(
-            "md:hidden p-2 transition-colors",
-            isScrolled ? "text-foreground" : "text-white"
-          )}
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </Container>
-
-      {/* Mobile Menu Overlay */}
-      <div
-        className={cn(
-          "fixed inset-x-0 top-[60px] p-4 bg-white shadow-xl md:hidden transition-all duration-300 ease-in-out origin-top",
-          isMobileMenuOpen
-            ? "opacity-100 scale-y-100 translate-y-0"
-            : "opacity-0 scale-y-0 -translate-y-4 pointer-events-none"
-        )}
-      >
-        <div className="flex flex-col space-y-4">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navItems.map((link) => (
+              <Link
+                key={link.id}
+                href={link.url}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-secondary",
+                  isScrolled ? "text-slate-600" : "text-white/90"
+                )}
+                target={link.isExternal ? "_blank" : undefined}
+              >
+                {link.text}
+              </Link>
+            ))}
+            <Button
+              variant={isScrolled ? "primary" : "secondary"}
+              size="sm"
               className={cn(
-                "text-lg font-medium p-2 rounded-md hover:bg-gray-50",
-                pathname === link.href ? "text-primary" : "text-foreground"
+                 !isScrolled && "border-white/50 text-white hover:bg-white hover:text-primary rounded-full"
               )}
+              href="/contact"
             >
-              {link.label}
-            </Link>
-          ))}
-          <Button href="/contact" className="w-full justify-center">
-             Get Started
-          </Button>
-        </div>
-      </div>
-    </nav>
+              Get Started
+            </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden relative z-50 p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <div className="w-6 h-5 flex flex-col justify-between">
+              <span
+                className={cn(
+                  "w-full h-0.5 transition-all duration-300",
+                  isScrolled ? "bg-slate-900" : "bg-white",
+                   isMobileMenuOpen && "rotate-45 translate-y-2 bg-slate-900"
+                )}
+              />
+              <span
+                className={cn(
+                  "w-full h-0.5 transition-all duration-300",
+                   isScrolled ? "bg-slate-900" : "bg-white",
+                   isMobileMenuOpen && "opacity-0"
+                )}
+              />
+              <span
+                className={cn(
+                  "w-full h-0.5 transition-all duration-300",
+                   isScrolled ? "bg-slate-900" : "bg-white",
+                   isMobileMenuOpen && "-rotate-45 -translate-y-2.5 bg-slate-900"
+                )}
+              />
+            </div>
+          </button>
+
+          {/* Mobile Menu Overlay */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="absolute top-0 left-0 right-0 bg-white shadow-xl p-4 pt-24 pb-8 md:hidden rounded-b-3xl"
+              >
+                <div className="flex flex-col gap-4">
+                  {navItems.map((link) => (
+                    <Link
+                      key={link.id}
+                      href={link.url}
+                      className="text-lg font-medium text-slate-900 py-2 border-b border-slate-100"
+                      target={link.isExternal ? "_blank" : undefined}
+                    >
+                      {link.text}
+                    </Link>
+                  ))}
+                  <Button href="/contact" className="w-full justify-center rounded-full">
+                     Get Started
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
+      </Container>
+    </header>
   );
 }
